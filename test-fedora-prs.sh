@@ -58,6 +58,9 @@ echo === Flagging PRs... >&2
 
 echo === Running Workflow... >&2
 mbici-wf run \
+     -maxCheckoutTasks 5 \
+     -maxSrpmTasks 50 \
+     -maxRpmTasks 20 \
      -workflow test/workflow.xml \
      -resultDir "$resultDir" \
      -cacheDir "$cacheDir" \
