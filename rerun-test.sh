@@ -20,8 +20,8 @@ set -eu
 
 plan=/home/kojan/git/mbici-config/plan/bootstrap-maven-rawhide.xml
 platform=/home/kojan/git/mbici-config/platform/rawhide-jdk.xml
-resultDir=/home/kojan/wf-cache/task
-cacheDir=/home/kojan/wf-cache
+resultDir=/mnt/nfs/mbi-result
+cacheDir=/mnt/nfs/mbi-cache
 workDir=/tmp
 PATH=$PATH:/home/kojan/git/mbici-workflow/target
 
@@ -30,9 +30,10 @@ echo === UID: $uid === >&2
 
 echo === Running Workflow... >&2
 mbici-wf run \
-     -maxCheckoutTasks 5 \
-     -maxSrpmTasks 50 \
-     -maxRpmTasks 20 \
+     -kubernetes \
+     -maxCheckoutTasks 10 \
+     -maxSrpmTasks 500 \
+     -maxRpmTasks 200 \
      -workflow test/workflow.xml \
      -resultDir "$resultDir" \
      -cacheDir "$cacheDir" \
