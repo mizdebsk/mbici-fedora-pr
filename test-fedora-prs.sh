@@ -39,7 +39,8 @@ echo === Generating Workflow... >&2
 mbici-wf generate -plan "$plan" \
      -platform "$platform" \
      -subject test/subject.xml \
-     -workflow test/workflow.xml
+     -workflow test/workflow.xml \
+     -validate
 
 echo === Generating initial report... >&2
 mbici-wf report \
@@ -62,6 +63,7 @@ mbici-wf run \
      -maxCheckoutTasks 10 \
      -maxSrpmTasks 500 \
      -maxRpmTasks 200 \
+     -maxValidateTasks 20 \
      -workflow test/workflow.xml \
      -resultDir "$resultDir" \
      -cacheDir "$cacheDir" \

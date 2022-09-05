@@ -34,6 +34,7 @@ mbici-wf run \
      -maxCheckoutTasks 10 \
      -maxSrpmTasks 500 \
      -maxRpmTasks 200 \
+     -maxValidateTasks 20 \
      -workflow test/workflow.xml \
      -resultDir "$resultDir" \
      -cacheDir "$cacheDir" \
