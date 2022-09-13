@@ -41,6 +41,14 @@ components = set(element.text for element in ET.parse(args.plan).findall('.//com
 
 PR_RE = re.compile(f'^(.+)/rpms/([^/]+)/pull-request/([1-9][0-9]*)$')
 
+for pr_url in args.prs:
+    match = PR_RE.match(pr_url)
+    if not match:
+        raise Exception(f'Invalid PR URL: {pr_url}')
+    component = match.group(2)
+    if component not in components:
+        raise Exception(f'Component {component} is not part of test plan')
+
 scms = {}
 commits = {}    
 
@@ -50,8 +58,6 @@ for component in components:
 
 for pr_url in args.prs:
     match = PR_RE.match(pr_url)
-    if not match:
-        raise Exception(f'Invalid PR URL: {pr_url}')
     pagure_base = match.group(1)
     component = match.group(2)
     pr = match.group(3)
