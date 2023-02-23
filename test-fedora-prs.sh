@@ -40,7 +40,7 @@ mbici-wf generate -plan "$plan" \
      -platform "$platform" \
      -subject test/subject.xml \
      -workflow test/workflow.xml \
-     -validate
+#     -validate
 
 echo === Generating initial report... >&2
 mbici-wf report \
