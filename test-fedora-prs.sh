@@ -23,7 +23,6 @@ platform=/home/kojan/git/mbici-config/platform/rawhide-jdk.xml
 resultDir=/mnt/nfs/mbi-result/pr
 cacheDir=/mnt/nfs/mbi-cache
 workDir=/tmp
-PATH=$PATH:/home/kojan/git/mbici-workflow/target
 
 rm -rf test/
 mkdir test
@@ -36,20 +35,20 @@ echo === Generating Test Subject from PRs... >&2
 ./subject-from-fedora-prs.py -plan "$plan" $@ >test/subject.xml
 
 echo === Generating Workflow... >&2
-mbici-wf generate -plan "$plan" \
-     -platform "$platform" \
-     -subject test/subject.xml \
-     -workflow test/workflow.xml \
-#     -validate
+mbici-wf generate --plan "$plan" \
+     --platform "$platform" \
+     --subject test/subject.xml \
+     --workflow test/workflow.xml \
+#     --validate
 
 echo === Generating initial report... >&2
 mbici-wf report \
-     -plan "$plan" \
-     -platform "$platform" \
-     -subject test/subject.xml \
-     -workflow test/workflow.xml \
-     -resultDir "$resultDir" \
-     -reportDir test/report
+     --plan "$plan" \
+     --platform "$platform" \
+     --subject test/subject.xml \
+     --workflow test/workflow.xml \
+     --result-dir "$resultDir" \
+     --report-dir test/report
 
 echo === Uploading initial report to AWS... >&2
 s3cmd put -r --acl-public test/report/* s3://mbi-artifacts/$uid/
@@ -58,26 +57,25 @@ echo === Flagging PRs... >&2
 ./flag-fedora-prs.py -uid $uid -workflow test/workflow.xml $@
 
 echo === Running Workflow... >&2
-mbici-wf run \
-     -kubernetesNamespace mbici-pr \
-     -maxCheckoutTasks 10 \
-     -maxSrpmTasks 500 \
-     -maxRpmTasks 200 \
-     -maxValidateTasks 20 \
-     -workflow test/workflow.xml \
-     -resultDir "$resultDir" \
-     -cacheDir "$cacheDir" \
-     -workDir "$workDir"
+mbici-wf kube-exec \
+     --namespace mbici-pr \
+     --max-checkout-tasks 10 \
+     --max-srpm-tasks 500 \
+     --max-rpm-tasks 200 \
+     --workflow test/workflow.xml \
+     --result-dir "$resultDir" \
+     --cache-dir "$cacheDir" \
+     --work-dir "$workDir"
 
 echo === Generating final report... >&2
 rm -rf test/report/
 mbici-wf report \
-     -plan "$plan" \
-     -platform "$platform" \
-     -subject test/subject.xml \
-     -workflow test/workflow.xml \
-     -resultDir "$resultDir" \
-     -reportDir test/report
+     --plan "$plan" \
+     --platform "$platform" \
+     --subject test/subject.xml \
+     --workflow test/workflow.xml \
+     --result-dir "$resultDir" \
+     --report-dir test/report
 
 echo === Uploading final report to AWS... >&2
 s3cmd put -r --acl-public test/report/* s3://mbi-artifacts/$uid/
